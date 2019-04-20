@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+  Sample SAM Template for sam-app
+  
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 3
+
+Resources:
+  TodoGetFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: src/
+      Handler: app.todos_get
+      Runtime: nodejs8.10
+      Events:
+        TodoGetAPI:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /todos
+            Method: get
+  TodoPostFunction: 
+      Type: AWS::Serverless::Function
+      Properties:
+        CodeUri: src/
+        Handler: app.todos_post
+        Runtime: nodejs8.10
+        Events:
+          TodoPostAPI:
+            Type: Api
+            Properties:
+              Path: /todos
+              Method: post
+        Policies: 
+          - AmazonDynamoDBFullAccess
+  MyDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName : id
+          AttributeType : S
+      KeySchema:
+        - AttributeName : id 
+          KeyType : HASH
+      ProvisionedThroughput: 
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+  

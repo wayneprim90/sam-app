@@ -1,0 +1,47 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-app Sample SAM Template for sam-app
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Resources:
+  TodoGetFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://wp3-personal-bucket/2de44a6a0f09b1b98b40f770f0420c03
+      Handler: app.todos_get
+      Runtime: nodejs8.10
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: get
+  TodoPostFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://wp3-personal-bucket/2de44a6a0f09b1b98b40f770f0420c03
+      Handler: app.todos_post
+      Runtime: nodejs8.10
+      Events:
+        GoodBye:
+          Type: Api
+          Properties:
+            Path: /todos
+            Method: post
+      Policies:
+      - AmazonDynamoDBFullAccess
+  MyDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
